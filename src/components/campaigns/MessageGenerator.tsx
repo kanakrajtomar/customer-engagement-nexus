@@ -36,6 +36,7 @@ export const MessageGenerator: React.FC<MessageGeneratorProps> = ({ onChange, ca
       setIsLoading(true);
       // In a real app, this would call an AI service
       const response = await mockApi.generateMessageSuggestions({
+        prompt: objective, // Add the required prompt property
         campaignObjective: objective
       });
 
