@@ -1,4 +1,3 @@
-
 import { Customer, Order, Campaign, Rule, AIRequest, AISegmentResponse, AIMessageResponse } from '../types';
 import { toast } from "@/components/ui/sonner";
 
@@ -99,9 +98,6 @@ export const authApi = {
   login: (credentials: { email: string, password: string }) => 
     fetchApi<{ user: any, token: string }>('/auth/login', 'POST', credentials),
 };
-
-// Export mockApi for development purposes (can be removed in production)
-export { mockApi };
 
 // Mock data API for preview and testing
 export const mockApi = {
@@ -308,3 +304,6 @@ export const mockApi = {
     }
   }
 };
+
+// Export mockApi for development purposes (can be removed in production)
+export { mockApi };
