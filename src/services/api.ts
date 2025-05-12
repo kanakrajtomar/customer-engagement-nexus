@@ -2,7 +2,7 @@
 import { Customer, Order, Campaign, Rule, AIRequest, AISegmentResponse, AIMessageResponse } from '../types';
 import { toast } from "@/components/ui/sonner";
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3001/api';
 
 // Helper function for API requests
 async function fetchApi<T>(
@@ -20,6 +20,12 @@ async function fetchApi<T>(
       }
     };
 
+    // Add token if available
+    const token = localStorage.getItem('crm_token');
+    if (token) {
+      options.headers['Authorization'] = `Bearer ${token}`;
+    }
+
     if (body) {
       options.body = JSON.stringify(body);
     }
@@ -28,7 +34,7 @@ async function fetchApi<T>(
     
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'API request failed');
+      throw new Error(errorData.message || errorData.error || 'API request failed');
     }
     
     return await response.json();
@@ -87,6 +93,15 @@ export const aiApi = {
   generateMessageSuggestions: (request: AIRequest) => 
     fetchApi<AIMessageResponse>('/ai/message', 'POST', request)
 };
+
+// Auth API
+export const authApi = {
+  login: (credentials: { email: string, password: string }) => 
+    fetchApi<{ user: any, token: string }>('/auth/login', 'POST', credentials),
+};
+
+// Export mockApi for development purposes (can be removed in production)
+export { mockApi };
 
 // Mock data API for preview and testing
 export const mockApi = {

@@ -1,38 +1,27 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockApi } from '@/services/api';
 import { Campaign, Customer } from '@/types';
 import { CampaignList } from '@/components/campaigns/CampaignList';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
+import { campaignApi, customerApi } from '@/services/api';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [campaignsData, customersData] = await Promise.all([
-          mockApi.getCampaigns(),
-          mockApi.getCustomers()
-        ]);
-        
-        setCampaigns(campaignsData);
-        setCustomers(customersData);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data: campaigns = [], isLoading: campaignsLoading } = useQuery({
+    queryKey: ['campaigns'],
+    queryFn: campaignApi.getCampaigns
+  });
 
-    fetchData();
-  }, []);
+  const { data: customers = [], isLoading: customersLoading } = useQuery({
+    queryKey: ['customers'],
+    queryFn: customerApi.getCustomers
+  });
 
+  const isLoading = campaignsLoading || customersLoading;
   const recentCampaigns = campaigns.slice(0, 3);
   const totalCustomers = customers.length;
   const totalSpent = customers.reduce((sum, customer) => sum + customer.total_spend, 0);
@@ -77,7 +66,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-500">
-              {isLoading ? '...' : `Avg ₹${Math.round(totalSpent / totalCustomers).toLocaleString()} per customer`}
+              {isLoading ? '...' : totalCustomers > 0 ? `Avg ₹${Math.round(totalSpent / totalCustomers).toLocaleString()} per customer` : 'No customers yet'}
             </p>
           </CardContent>
         </Card>

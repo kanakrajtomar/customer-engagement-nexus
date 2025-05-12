@@ -1,0 +1,93 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  picture   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Customer {
+  id               String           @id @default(uuid())
+  name             String
+  email            String           @unique
+  phone            String
+  total_spend      Float            @default(0)
+  last_purchase_date DateTime
+  visit_count      Int              @default(0)
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  orders           Order[]
+  communicationLogs CommunicationLog[]
+
+  @@map("customers")
+}
+
+model Order {
+  id          String   @id @default(uuid()) @map("order_id")
+  customer_id String
+  customer    Customer @relation(fields: [customer_id], references: [id])
+  order_date  DateTime
+  amount      Float
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model Campaign {
+  id           String            @id @default(uuid())
+  name         String
+  description  String?
+  audience_size Int              @default(0)
+  sent_count   Int              @default(0)
+  failed_count Int              @default(0)
+  status       String           @default("draft")
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+  rules        Rule[]
+  communicationLogs CommunicationLog[]
+
+  @@map("campaigns")
+}
+
+model Rule {
+  id          String    @id @default(uuid())
+  campaign_id String?
+  campaign    Campaign? @relation(fields: [campaign_id], references: [id])
+  type        String
+  field       String?
+  operator    String?
+  value       String?
+  combinator  String?
+  parent_id   String?
+  parent      Rule?     @relation("ParentChild", fields: [parent_id], references: [id])
+  children    Rule[]    @relation("ParentChild")
+
+  @@map("rules")
+}
+
+model CommunicationLog {
+  id          String   @id @default(uuid())
+  campaign_id String
+  campaign    Campaign @relation(fields: [campaign_id], references: [id])
+  customer_id String
+  customer    Customer @relation(fields: [customer_id], references: [id])
+  message     String
+  status      String
+  timestamp   DateTime @default(now())
+
+  @@map("communication_logs")
+}

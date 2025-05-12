@@ -1,216 +1,111 @@
 
-# Xeno Mini CRM Platform
+# Mini CRM Platform
 
-## Project Overview
-
-This is a comprehensive Mini CRM Platform developed for the 2025 SDE Internship Assignment at Xeno. The platform provides a complete solution for managing customer data, creating audience segments with dynamic rules, and running personalized campaigns.
+A complete CRM solution for managing customer data, creating segments, and running personalized campaigns.
 
 ## Features
 
-### 1. Data Ingestion APIs
-
-- REST APIs for customer and order data
-- JSON request/response payloads
-- Input validation for email formats, amounts, etc.
-- Complete API documentation
-
-### 2. Campaign Creation UI
-
-- Audience Segmentation with dynamic rule builder (AND/OR logic)
-- Intuitive drag-and-drop rule building experience
-- Real-time audience size preview
-- Campaign history with detailed statistics
-
-### 3. Campaign Delivery & Logging
-
-- Personalized message templates
-- Delivery status tracking (SENT/FAILED)
-- Communication logs for each campaign
-
-### 4. Authentication
-
-- Google OAuth 2.0 integration
-- Protected routes for authenticated users only
-
-### 5. AI Integration
-
-- Natural Language to Segment Rules conversion
-- AI-driven message suggestions based on campaign objectives
-- Product/offer image recommendations
+- Customer management with search and filtering
+- Campaign creation with audience segmentation
+- Rule-based segmentation with AND/OR logic
+- Natural language to segment rules conversion using AI
+- AI-powered message generation based on campaign objectives
+- Campaign execution and tracking
 
 ## Tech Stack
 
-- **Frontend**: React.js with TypeScript
-- **UI Library**: Tailwind CSS + shadcn/ui components
-- **State Management**: React Query
-- **Routing**: React Router
-- **Authentication**: Google OAuth 2.0
-- **AI Integration**: OpenAI API
+### Frontend
+- React + TypeScript
+- Tailwind CSS
+- Shadcn UI components
+- React Query for data fetching
+- React Router for navigation
 
-## Project Structure
-
-```
-src/
-├── components/         # UI components
-│   ├── campaigns/      # Campaign-related components
-│   ├── customers/      # Customer-related components
-│   ├── layout/         # Layout components (Sidebar, Navbar)
-│   ├── segments/       # Segmentation components
-│   └── ui/             # UI components from shadcn
-├── contexts/           # React contexts
-├── hooks/              # Custom React hooks
-├── lib/                # Utility functions
-├── pages/              # Page components
-├── services/           # API services
-└── types/              # TypeScript type definitions
-```
+### Backend
+- Node.js + Express
+- PostgreSQL database with Prisma ORM
+- Authentication with JWT
+- AI integration for natural language processing
 
 ## Setup Instructions
 
 ### Prerequisites
+- Node.js (v14+)
+- PostgreSQL database
 
-- Node.js (v16+)
-- npm, yarn, or pnpm
+### Backend Setup
 
-### Installation
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/your-username/xeno-mini-crm.git
-   cd xeno-mini-crm
-   ```
+1. Navigate to the server directory:
+```
+cd server
+```
 
 2. Install dependencies:
-   ```
-   npm install
-   ```
+```
+npm install
+```
 
-3. Start the development server:
-   ```
-   npm run dev
-   ```
+3. Create a .env file with your database connection string:
+```
+DATABASE_URL="postgresql://postgres:password@localhost:5432/crm_db"
+JWT_SECRET="your_secure_jwt_secret_key"
+PORT=3001
+```
 
-4. Open [http://localhost:8080](http://localhost:8080) to view the app in your browser.
+4. Run Prisma migrations:
+```
+npx prisma migrate dev --name init
+```
+
+5. Seed the database:
+```
+node prisma/seed.js
+```
+
+6. Start the server:
+```
+npm run dev
+```
+
+The backend API will be available at http://localhost:3001/api.
+
+### Frontend Setup
+
+1. Install dependencies from the root folder:
+```
+npm install
+```
+
+2. Start the development server:
+```
+npm run dev
+```
+
+The frontend app will be available at http://localhost:5173.
 
 ## API Documentation
 
-The project includes comprehensive API documentation for all endpoints. In the application, navigate to:
+### Authentication
+- `POST /api/auth/login` - Authenticate user and get JWT token
 
-- `/api-docs` for the Swagger UI documentation
-- See the API documentation in the README for detailed request/response examples
+### Customers
+- `GET /api/customers` - Get all customers
+- `GET /api/customers/:id` - Get customer by ID
+- `POST /api/customers` - Create new customer
+- `PUT /api/customers/:id` - Update customer
+- `DELETE /api/customers/:id` - Delete customer
 
-## Database Schema
+### Campaigns
+- `GET /api/campaigns` - Get all campaigns
+- `GET /api/campaigns/:id` - Get campaign by ID
+- `POST /api/campaigns` - Create new campaign
+- `POST /api/campaigns/preview` - Preview audience size for rules
+- `POST /api/campaigns/:id/execute` - Execute campaign
 
-### Customers Table
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | string | Primary key |
-| name | string | Customer name |
-| email | string | Customer email |
-| phone | string | Customer phone number |
-| total_spend | number | Total amount spent |
-| last_purchase_date | date | Date of last purchase |
-| visit_count | number | Number of visits |
-| created_at | datetime | Record creation timestamp |
-| updated_at | datetime | Record update timestamp |
-
-### Orders Table
-
-| Column | Type | Description |
-|--------|------|-------------|
-| order_id | string | Primary key |
-| customer_id | string | Foreign key to customers.id |
-| order_date | date | Date of the order |
-| amount | number | Order amount |
-| created_at | datetime | Record creation timestamp |
-| updated_at | datetime | Record update timestamp |
-
-### Campaigns Table
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | string | Primary key |
-| name | string | Campaign name |
-| description | string | Campaign description |
-| rules | json | Segment rules |
-| audience_size | number | Size of the target audience |
-| sent_count | number | Number of messages sent |
-| failed_count | number | Number of messages failed |
-| status | enum | Campaign status (draft, sending, completed, failed) |
-| created_at | datetime | Record creation timestamp |
-| updated_at | datetime | Record update timestamp |
-
-### Communication Logs Table
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | string | Primary key |
-| campaign_id | string | Foreign key to campaigns.id |
-| customer_id | string | Foreign key to customers.id |
-| message | string | The message sent |
-| status | enum | Delivery status (SENT, FAILED, PENDING) |
-| timestamp | datetime | Timestamp of the communication |
-
-## AI Integration
-
-This project uses OpenAI's GPT-4 API for two main features:
-
-1. **Natural Language to Segment Rules**: Converts plain language descriptions of customer segments into structured rules that can be used by the platform.
-
-2. **Message Generation**: Suggests personalized message templates based on campaign objectives and targeted segments.
-
-The AI integration was chosen for its ability to process natural language efficiently and generate context-aware suggestions, which significantly improves the user experience by making complex segmentation accessible to non-technical users.
-
-## Demo Script
-
-1. **Introduction (30 seconds)**
-   - Brief overview of the Mini CRM Platform
-   - Highlight key features: data management, segmentation, campaigns, AI integration
-
-2. **Login (15 seconds)**
-   - Demonstrate Google OAuth login
-   - Show the dashboard overview
-
-3. **Customer Management (1 minute)**
-   - Navigate to the Customers section
-   - Show the list of customers
-   - Demonstrate search and filtering capabilities
-   - Show customer details view
-
-4. **Segment Creation (2 minutes)**
-   - Navigate to Segments section
-   - Demonstrate the visual rule builder
-     - Create a complex segment with AND/OR conditions
-     - Show real-time audience size updates
-   - Demonstrate natural language segment creation
-     - Enter a prompt: "People who haven't shopped in 6 months and spent over ₹5K"
-     - Show the AI-generated rules
-     - Explain how the AI works behind the scenes
-
-5. **Campaign Creation (2 minutes)**
-   - Navigate to Campaigns section
-   - Create a new campaign
-   - Select the previously created segment
-   - Show message creation with personalization tokens
-   - Demonstrate AI message suggestions
-     - Enter objective: "bring back inactive users"
-     - Show the generated message variants
-   - Save the campaign
-
-6. **Campaign Execution and Monitoring (1 minute)**
-   - Execute the campaign
-   - Show the communication logs
-   - Demonstrate the campaign statistics dashboard with delivery rates
-
-7. **API Documentation (30 seconds)**
-   - Briefly show the API documentation
-   - Highlight the most important endpoints
-
-8. **Conclusion (15 seconds)**
-   - Recap the key features demonstrated
-   - Q&A
+### AI
+- `POST /api/ai/segment` - Generate segment rules from natural language
+- `POST /api/ai/message` - Generate message suggestions for campaign
 
 ## License
 
-This project was created for the Xeno SDE Internship Assignment and is not licensed for public use.
+MIT

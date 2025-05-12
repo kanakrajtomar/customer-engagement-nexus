@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { aiApi, mockApi } from '@/services/api';
+import { aiApi } from '@/services/api';
 import { toast } from '@/components/ui/sonner';
 
 interface MessageGeneratorProps {
@@ -34,9 +34,8 @@ export const MessageGenerator: React.FC<MessageGeneratorProps> = ({ onChange, ca
 
     try {
       setIsLoading(true);
-      // In a real app, this would call an AI service
-      const response = await mockApi.generateMessageSuggestions({
-        prompt: objective, // Add the required prompt property
+      const response = await aiApi.generateMessageSuggestions({
+        prompt: objective,
         campaignObjective: objective
       });
 

@@ -1,51 +1,31 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Customer } from '@/types';
-import { mockApi } from '@/services/api';
+import { customerApi } from '@/services/api';
 import { CustomerList } from '@/components/customers/CustomerList';
 import { Search, Upload, Download } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 const Customers = () => {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const data = await mockApi.getCustomers();
-        setCustomers(data);
-        setFilteredCustomers(data);
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data: customers = [], isLoading } = useQuery({
+    queryKey: ['customers'],
+    queryFn: customerApi.getCustomers
+  });
 
-    fetchCustomers();
-  }, []);
-
-  useEffect(() => {
-    const query = searchQuery.toLowerCase().trim();
-    
-    if (query === '') {
-      setFilteredCustomers(customers);
-    } else {
-      setFilteredCustomers(
-        customers.filter(
-          customer => 
-            customer.name.toLowerCase().includes(query) || 
-            customer.email.toLowerCase().includes(query) ||
-            customer.phone.includes(query)
-        )
+  // Filter customers based on search query
+  const filteredCustomers = searchQuery.trim() === ''
+    ? customers
+    : customers.filter(
+        customer => 
+          customer.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) || 
+          customer.email.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+          customer.phone.includes(searchQuery.trim())
       );
-    }
-  }, [searchQuery, customers]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);

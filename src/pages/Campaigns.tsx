@@ -1,51 +1,31 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CampaignList } from '@/components/campaigns/CampaignList';
 import { Campaign } from '@/types';
-import { mockApi } from '@/services/api';
+import { campaignApi } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 const Campaigns = () => {
   const navigate = useNavigate();
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const fetchCampaigns = async () => {
-      try {
-        const data = await mockApi.getCampaigns();
-        setCampaigns(data);
-        setFilteredCampaigns(data);
-      } catch (error) {
-        console.error('Error fetching campaigns:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data: campaigns = [], isLoading } = useQuery({
+    queryKey: ['campaigns'],
+    queryFn: campaignApi.getCampaigns
+  });
 
-    fetchCampaigns();
-  }, []);
-
-  useEffect(() => {
-    const query = searchQuery.toLowerCase().trim();
-    
-    if (query === '') {
-      setFilteredCampaigns(campaigns);
-    } else {
-      setFilteredCampaigns(
-        campaigns.filter(
-          campaign => 
-            campaign.name.toLowerCase().includes(query) || 
-            (campaign.description && campaign.description.toLowerCase().includes(query))
-        )
+  // Filter campaigns based on search query
+  const filteredCampaigns = searchQuery.trim() === ''
+    ? campaigns
+    : campaigns.filter(
+        campaign => 
+          campaign.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) || 
+          (campaign.description && campaign.description.toLowerCase().includes(searchQuery.toLowerCase().trim()))
       );
-    }
-  }, [searchQuery, campaigns]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rule } from '@/types';
-import { aiApi, mockApi } from '@/services/api';
+import { aiApi } from '@/services/api';
 import { toast } from "@/components/ui/sonner";
 
 interface NaturalLanguageInputProps {
@@ -27,8 +27,7 @@ export const NaturalLanguageInput: React.FC<NaturalLanguageInputProps> = ({ onRu
     try {
       setIsLoading(true);
       
-      // In a real app, this would call OpenAI or another AI service
-      const response = await mockApi.generateSegmentRules({ prompt });
+      const response = await aiApi.generateSegmentRules({ prompt });
       
       if (response.rules.length > 0) {
         onRulesGenerated(response.rules);
