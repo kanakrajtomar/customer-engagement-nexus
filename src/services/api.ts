@@ -4,6 +4,9 @@ import { toast } from "@/components/ui/sonner";
 
 const API_URL = 'http://localhost:3001/api';
 
+// Flag to determine if we should use mock data by default
+const USE_MOCK_DATA = true;
+
 // Helper function for API requests
 async function fetchApi<T>(
   endpoint: string, 
@@ -12,6 +15,10 @@ async function fetchApi<T>(
   headers: Record<string, string> = {}
 ): Promise<T> {
   try {
+    if (USE_MOCK_DATA) {
+      throw new Error('Using mock data');
+    }
+    
     const options: RequestInit = {
       method,
       headers: {
@@ -40,6 +47,20 @@ async function fetchApi<T>(
     return await response.json();
   } catch (error) {
     console.error('API error:', error);
+    
+    // If we're using mock data or there's an API error, return mock data
+    if (endpoint.includes('/customers')) {
+      return mockApi.getCustomers() as unknown as T;
+    } else if (endpoint.includes('/campaigns')) {
+      return mockApi.getCampaigns() as unknown as T;
+    } else if (endpoint.includes('/campaigns/preview')) {
+      return mockApi.previewAudience(body?.rules || []) as unknown as T;
+    } else if (endpoint.includes('/ai/segment')) {
+      return mockApi.generateSegmentRules(body) as unknown as T;
+    } else if (endpoint.includes('/ai/message')) {
+      return mockApi.generateMessageSuggestions(body) as unknown as T;
+    }
+    
     toast.error('API request failed: ' + (error as Error).message);
     throw error;
   }
@@ -305,5 +326,3 @@ export const mockApi = {
     }
   }
 };
-
-// Removed the duplicate export here

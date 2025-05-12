@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Customer } from '@/types';
 import { customerApi } from '@/services/api';
 import { CustomerList } from '@/components/customers/CustomerList';
-import { Search, Upload, Download } from 'lucide-react';
+import { Search, Upload, Download, Plus, Filter } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
 const Customers = () => {
@@ -34,20 +34,24 @@ const Customers = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Customers</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Customers</h1>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" size="sm" className="shadow-sm hover:shadow-md transition-all">
             <Upload className="mr-2 h-4 w-4" />
             Import
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" size="sm" className="shadow-sm hover:shadow-md transition-all">
             <Download className="mr-2 h-4 w-4" />
             Export
+          </Button>
+          <Button className="shadow-sm hover:shadow-md transition-all bg-crm-blue hover:bg-crm-darkBlue">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Customer
           </Button>
         </div>
       </div>
 
-      <Card className="bg-white shadow-sm">
+      <Card className="bg-white shadow-md border border-gray-100">
         <CardContent className="p-4">
           <div className="flex items-center space-x-2">
             <div className="relative flex-1">
@@ -57,11 +61,14 @@ const Customers = () => {
                 placeholder="Search customers by name, email or phone..."
                 value={searchQuery}
                 onChange={handleSearch}
-                className="pl-10"
+                className="pl-10 border-gray-200 focus:border-crm-blue focus:ring-1 focus:ring-crm-lightBlue transition-all"
               />
             </div>
             <div className="flex-shrink-0">
-              <Button variant="outline">Filter</Button>
+              <Button variant="outline" size="icon" className="border-gray-200 hover:bg-gray-50">
+                <Filter className="h-4 w-4" />
+                <span className="sr-only">Filter</span>
+              </Button>
             </div>
           </div>
         </CardContent>
