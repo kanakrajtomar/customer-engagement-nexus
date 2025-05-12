@@ -1,3 +1,4 @@
+
 import { Customer, Order, Campaign, Rule, AIRequest, AISegmentResponse, AIMessageResponse } from '../types';
 import { toast } from "@/components/ui/sonner";
 
@@ -120,7 +121,7 @@ export const mockApi = {
             type: 'condition',
             field: 'total_spend',
             operator: '>',
-            value: 5000
+            value: '5000'
           }
         ],
         audience_size: 234,
@@ -140,7 +141,7 @@ export const mockApi = {
             type: 'condition',
             field: 'total_spend',
             operator: '>',
-            value: 10000
+            value: '10000'
           }
         ],
         audience_size: 87,
@@ -160,7 +161,7 @@ export const mockApi = {
             type: 'condition',
             field: 'visit_count',
             operator: '>',
-            value: 0
+            value: '0'
           }
         ],
         audience_size: 500,
@@ -217,7 +218,7 @@ export const mockApi = {
             type: 'condition',
             field: 'total_spend',
             operator: '>',
-            value: 5000
+            value: '5000'
           }
         ],
         explanation: "These rules target customers who haven't made a purchase in the last 6 months and have spent over ₹5,000 in total."
@@ -230,14 +231,14 @@ export const mockApi = {
             type: 'condition',
             field: 'total_spend',
             operator: '>',
-            value: 10000
+            value: '10000'
           },
           {
             id: crypto.randomUUID(),
             type: 'condition',
             field: 'visit_count',
             operator: '>',
-            value: 5
+            value: '5'
           }
         ],
         explanation: "These rules target high-value customers who have spent over ₹10,000 and visited more than 5 times."
@@ -251,7 +252,7 @@ export const mockApi = {
             type: 'condition',
             field: 'visit_count',
             operator: '>',
-            value: 3
+            value: '3'
           }
         ],
         explanation: "These rules target customers who have visited more than 3 times."
@@ -305,5 +306,4 @@ export const mockApi = {
   }
 };
 
-// Export mockApi for development purposes (can be removed in production)
-export { mockApi };
+// Removed the duplicate export here
